@@ -81,6 +81,7 @@ class CourseServiceTest {
         NewCourseRequest form = new NewCourseRequest(COURSE_CODE, COURSE_NAME, COURSE_DESCRIPTION);
         doReturn(MYSQL_COURSE).when(repository).save(any(Course.class));
         URI uri = service.newCourse(form);
+        assertNotNull(uri);
         assertEquals("/courses/mysql-1", uri.getPath());
         verify(repository, times(1)).save(any(Course.class));
     }

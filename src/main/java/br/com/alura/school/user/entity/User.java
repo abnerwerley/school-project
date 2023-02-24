@@ -54,18 +54,6 @@ class User {
         this.courses = courses;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public List<Course> getCourses() {
-        return courses;
-    }
-
     public void setCourses(Course course) {
         this.courses.add(course);
     }

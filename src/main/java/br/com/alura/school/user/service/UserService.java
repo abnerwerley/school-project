@@ -40,7 +40,9 @@ public class UserService {
         try {
             repository.save(newUserRequest.toEntity());
             return URI.create(format("/users/%s", newUserRequest.getUsername()));
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
+            throw new RequestException("Username must not have any space.");
+        }catch (Exception e) {
             throw new RequestException("Could not create user.");
         }
     }

@@ -1,6 +1,5 @@
 package br.com.alura.school.user.controller;
 
-import br.com.alura.school.user.entity.User;
 import br.com.alura.school.user.json.NewUserRequest;
 import br.com.alura.school.user.json.UserResponse;
 import br.com.alura.school.user.service.UserService;
@@ -34,8 +33,12 @@ class UserController {
     }
 
     @GetMapping("")
-    ResponseEntity<List<UserResponse>> allUsers(){
-        return ResponseEntity.ok(service.allUsers());
+    ResponseEntity<List<UserResponse>> allUsers() {
+        List<UserResponse> response = service.allUsers();
+        if (response.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(response);
     }
 
 }
