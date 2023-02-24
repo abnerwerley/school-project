@@ -1,8 +1,9 @@
-package br.com.alura.school.user;
+package br.com.alura.school.user.json;
 
+import br.com.alura.school.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-class UserResponse {
+public class UserResponse {
 
     @JsonProperty
     private final String username;
@@ -10,7 +11,7 @@ class UserResponse {
     @JsonProperty
     private final String email;
 
-    UserResponse(User user) {
+    public UserResponse(User user) {
         this.username = user.getUsername();
         this.email = user.getEmail();
     }

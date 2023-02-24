@@ -1,21 +1,22 @@
-package br.com.alura.school.course;
+package br.com.alura.school.course.json;
 
+import br.com.alura.school.course.entity.Course;
 import br.com.alura.school.support.validation.Unique;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-class NewCourseRequest {
+public class NewCourseRequest {
 
     @Unique(entity = Course.class, field = "code")
-    @Size(max=10)
+    @Size(max = 10)
     @NotBlank
     @JsonProperty
     private final String code;
 
     @Unique(entity = Course.class, field = "name")
-    @Size(max=20)
+    @Size(max = 20)
     @NotBlank
     @JsonProperty
     private final String name;
@@ -33,7 +34,7 @@ class NewCourseRequest {
         return code;
     }
 
-    Course toEntity() {
+    public Course toEntity() {
         return new Course(code, name, description);
     }
 }

@@ -1,4 +1,4 @@
-package br.com.alura.school.course;
+package br.com.alura.school.course.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,18 +10,19 @@ import javax.validation.constraints.Size;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
+public
 class Course {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Size(max=10)
+    @Size(max = 10)
     @NotBlank
     @Column(nullable = false, unique = true)
     private String code;
 
-    @Size(max=20)
+    @Size(max = 20)
     @NotBlank
     @Column(nullable = false, unique = true)
     private String name;
@@ -29,23 +30,24 @@ class Course {
     private String description;
 
     @Deprecated
-    protected Course() { }
+    protected Course() {
+    }
 
-    Course(String code, String name, String description) {
+    public Course(String code, String name, String description) {
         this.code = code;
         this.name = name;
         this.description = description;
     }
 
-    String getCode() {
+    public String getCode() {
         return code;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    String getDescription() {
+    public String getDescription() {
         return description;
     }
 
