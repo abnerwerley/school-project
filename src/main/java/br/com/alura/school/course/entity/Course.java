@@ -1,19 +1,29 @@
 package br.com.alura.school.course.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import br.com.alura.school.user.entity.User;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 public
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 class Course {
 
     @Id
+
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
@@ -29,9 +39,8 @@ class Course {
 
     private String description;
 
-    @Deprecated
-    protected Course() {
-    }
+    @ManyToMany(mappedBy = "courses")
+    private List<User> usersEnrolled = new ArrayList<>();
 
     public Course(String code, String name, String description) {
         this.code = code;
@@ -39,16 +48,14 @@ class Course {
         this.description = description;
     }
 
-    public String getCode() {
-        return code;
+    public Course(String code, String name, String description, List<User> usersEnrolled) {
+        this.code = code;
+        this.name = name;
+        this.description = description;
+        this.usersEnrolled = usersEnrolled;
     }
 
-    public String getName() {
-        return name;
+    public void setUsersEnrolled(User usersEnrolled) {
+        this.usersEnrolled.add(usersEnrolled);
     }
-
-    public String getDescription() {
-        return description;
-    }
-
 }
