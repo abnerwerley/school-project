@@ -26,6 +26,9 @@ public class CourseController {
     @GetMapping("")
     ResponseEntity<List<CourseResponse>> allCourses() {
         List<CourseResponse> courses = service.allCourses();
+        if (courses.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
         return ResponseEntity.ok(courses);
     }
 

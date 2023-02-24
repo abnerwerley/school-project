@@ -58,6 +58,7 @@ public class CourseService {
             return URI.create(format("/courses/%s", newCourseRequest.getCode()));
 
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RequestException("Could not create new course.");
         }
     }
