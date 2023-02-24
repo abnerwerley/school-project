@@ -1,4 +1,4 @@
-package br.com.alura.school.user;
+package br.com.alura.school.user.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,6 +11,7 @@ import javax.validation.constraints.Size;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
+public
 class User {
 
     @Id
@@ -30,16 +31,16 @@ class User {
     @Deprecated
     protected User() {}
 
-    User(String username, String email) {
+    public User(String username, String email) {
         this.username = username;
         this.email = email;
     }
 
-    String getUsername() {
+    public String getUsername() {
         return username;
     }
 
-    String getEmail() {
+    public String getEmail() {
         return email;
     }
 

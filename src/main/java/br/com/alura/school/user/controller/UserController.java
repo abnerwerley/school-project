@@ -1,5 +1,9 @@
-package br.com.alura.school.user;
+package br.com.alura.school.user.controller;
 
+import br.com.alura.school.user.entity.User;
+import br.com.alura.school.user.json.NewUserRequest;
+import br.com.alura.school.user.json.UserResponse;
+import br.com.alura.school.user.persistence.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,7 +19,7 @@ class UserController {
 
     private final UserRepository userRepository;
 
-    UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

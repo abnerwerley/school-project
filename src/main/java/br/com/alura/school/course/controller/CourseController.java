@@ -1,5 +1,9 @@
-package br.com.alura.school.course;
+package br.com.alura.school.course.controller;
 
+import br.com.alura.school.course.entity.Course;
+import br.com.alura.school.course.json.CourseResponse;
+import br.com.alura.school.course.json.NewCourseRequest;
+import br.com.alura.school.course.persistence.CourseRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,7 +20,7 @@ class CourseController {
 
     private final CourseRepository courseRepository;
 
-    CourseController(CourseRepository courseRepository) {
+    public CourseController(CourseRepository courseRepository) {
         this.courseRepository = courseRepository;
     }
 

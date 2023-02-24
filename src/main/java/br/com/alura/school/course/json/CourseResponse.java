@@ -1,10 +1,11 @@
-package br.com.alura.school.course;
+package br.com.alura.school.course.json;
 
+import br.com.alura.school.course.entity.Course;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Optional;
 
-class CourseResponse {
+public class CourseResponse {
 
     @JsonProperty
     private final String code;
@@ -15,7 +16,7 @@ class CourseResponse {
     @JsonProperty
     private final String shortDescription;
 
-    CourseResponse(Course course) {
+    public CourseResponse(Course course) {
         this.code = course.getCode();
         this.name = course.getName();
         this.shortDescription = Optional.of(course.getDescription()).map(this::abbreviateDescription).orElse("");
