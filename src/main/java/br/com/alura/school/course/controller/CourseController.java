@@ -1,5 +1,6 @@
 package br.com.alura.school.course.controller;
 
+import br.com.alura.school.course.json.CourseEnrollmentRequest;
 import br.com.alura.school.course.json.CourseResponse;
 import br.com.alura.school.course.json.NewCourseRequest;
 import br.com.alura.school.course.service.CourseService;
@@ -36,5 +37,11 @@ public class CourseController {
     ResponseEntity<Void> newCourse(@RequestBody @Valid NewCourseRequest newCourseRequest) {
         URI location = service.newCourse(newCourseRequest);
         return ResponseEntity.created(location).build();
+    }
+
+    @PostMapping("/{code}/enroll")
+    ResponseEntity<Void> enrollToCourse(@RequestBody CourseEnrollmentRequest username, @PathVariable("code") String code) {
+        service.courseEnrollment(username.getUsername(), code);
+        return ResponseEntity.ok().build();
     }
 }

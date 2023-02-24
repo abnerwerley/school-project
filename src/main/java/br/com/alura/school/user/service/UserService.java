@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
+import java.util.List;
 
 import static java.lang.String.format;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -31,4 +32,7 @@ public class UserService {
         return URI.create(format("/users/%s", newUserRequest.getUsername()));
     }
 
+    public List<User> allUsers() {
+        return repository.findAll();
+    }
 }

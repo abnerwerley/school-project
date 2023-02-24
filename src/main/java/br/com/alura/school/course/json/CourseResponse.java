@@ -2,19 +2,26 @@ package br.com.alura.school.course.json;
 
 import br.com.alura.school.course.entity.Course;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Optional;
 
+
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CourseResponse {
 
     @JsonProperty
-    private final String code;
+    private String code;
 
     @JsonProperty
-    private final String name;
+    private String name;
 
     @JsonProperty
-    private final String shortDescription;
+    private String shortDescription;
 
     public CourseResponse(Course course) {
         this.code = course.getCode();

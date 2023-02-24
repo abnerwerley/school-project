@@ -1,5 +1,6 @@
 package br.com.alura.school.user.controller;
 
+import br.com.alura.school.user.entity.User;
 import br.com.alura.school.user.json.NewUserRequest;
 import br.com.alura.school.user.json.UserResponse;
 import br.com.alura.school.user.service.UserService;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -29,6 +31,11 @@ class UserController {
     ResponseEntity<Void> newUser(@RequestBody @Valid NewUserRequest newUserRequest) {
         URI location = service.newUser(newUserRequest);
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping("")
+    ResponseEntity<List<User>> allUsers(){
+        return ResponseEntity.ok(service.allUsers());
     }
 
 }
