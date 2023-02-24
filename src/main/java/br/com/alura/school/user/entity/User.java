@@ -1,6 +1,8 @@
 package br.com.alura.school.user.entity;
 
 import br.com.alura.school.course.entity.Course;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -13,6 +15,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 public
+@Getter
+@AllArgsConstructor
 class User {
 
     @Id

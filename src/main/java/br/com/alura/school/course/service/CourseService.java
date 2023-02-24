@@ -1,6 +1,7 @@
 package br.com.alura.school.course.service;
 
 import br.com.alura.school.course.entity.Course;
+import br.com.alura.school.course.json.CourseReportResponse;
 import br.com.alura.school.course.json.CourseResponse;
 import br.com.alura.school.course.json.NewCourseRequest;
 import br.com.alura.school.course.persistence.CourseRepository;
@@ -11,6 +12,7 @@ import br.com.alura.school.user.persistence.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -87,6 +89,25 @@ public class CourseService {
             throw new RequestException(e.getMessage());
         } catch (Exception e) {
             throw new RequestException("Could not enroll to course.");
+        }
+    }
+
+    public List<CourseReportResponse> report() {
+        try {
+            List<User> users = userRepository.findAll();
+            List<CourseReportResponse> reportsPerUser = new ArrayList<>();
+
+            for (User user : users) {
+                Long coursesEnrolled = repository.findCourseQuantityByUser(user.getId());
+                if (coursesEnrolled != 0L) {
+                    CourseReportResponse report = new CourseReportResponse(user.getEmail(), coursesEnrolled);
+                    reportsPerUser.add(report);
+                }
+            }
+            return reportsPerUser;
+
+        } catch (Exception e) {
+            throw new RequestException("Could not get courses report.");
         }
     }
 }

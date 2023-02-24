@@ -8,7 +8,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-@Entity
+@Entity(name = "user_course")
 @Table(name = "user_course")
 @Getter
 @Setter

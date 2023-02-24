@@ -1,6 +1,7 @@
 package br.com.alura.school.course.controller;
 
 import br.com.alura.school.course.json.CourseEnrollmentRequest;
+import br.com.alura.school.course.json.CourseReportResponse;
 import br.com.alura.school.course.json.CourseResponse;
 import br.com.alura.school.course.json.NewCourseRequest;
 import br.com.alura.school.course.service.CourseService;
@@ -44,5 +45,14 @@ public class CourseController {
     ResponseEntity<Void> enrollToCourse(@RequestBody CourseEnrollmentRequest username, @PathVariable("code") String code) {
         service.courseEnrollment(username.getUsername(), code);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/enroll/report")
+    ResponseEntity<List<CourseReportResponse>> report() {
+        List<CourseReportResponse> report = service.report();
+        if (report.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(report);
     }
 }
