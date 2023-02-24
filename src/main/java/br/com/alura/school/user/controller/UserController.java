@@ -1,38 +1,33 @@
 package br.com.alura.school.user.controller;
 
-import br.com.alura.school.user.entity.User;
 import br.com.alura.school.user.json.NewUserRequest;
 import br.com.alura.school.user.json.UserResponse;
-import br.com.alura.school.user.persistence.UserRepository;
+import br.com.alura.school.user.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import java.net.URI;
 
-import static java.lang.String.format;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-
 @RestController
+@RequestMapping("/users")
 class UserController {
 
-    private final UserRepository userRepository;
+    private final UserService service;
 
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(UserService service) {
+        this.service = service;
     }
 
-    @GetMapping("/users/{username}")
+    @GetMapping("/{username}")
     ResponseEntity<UserResponse> userByUsername(@PathVariable("username") String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, format("User %s not found", username)));
-        return ResponseEntity.ok(new UserResponse(user));
+        UserResponse userResponse = service.userByUsername(username);
+        return ResponseEntity.ok(userResponse);
     }
 
-    @PostMapping("/users")
+    @PostMapping("")
     ResponseEntity<Void> newUser(@RequestBody @Valid NewUserRequest newUserRequest) {
-        userRepository.save(newUserRequest.toEntity());
-        URI location = URI.create(format("/users/%s", newUserRequest.getUsername()));
+        URI location = service.newUser(newUserRequest);
         return ResponseEntity.created(location).build();
     }
 
