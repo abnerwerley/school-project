@@ -3,7 +3,7 @@ package br.com.alura.school.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+@ResponseStatus(HttpStatus.BAD_REQUEST)
 public class RequestException extends RuntimeException {
     private final String message;
 

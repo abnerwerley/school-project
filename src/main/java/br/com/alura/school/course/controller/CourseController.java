@@ -4,6 +4,7 @@ import br.com.alura.school.course.json.CourseEnrollmentRequest;
 import br.com.alura.school.course.json.CourseResponse;
 import br.com.alura.school.course.json.NewCourseRequest;
 import br.com.alura.school.course.service.CourseService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +43,6 @@ public class CourseController {
     @PostMapping("/{code}/enroll")
     ResponseEntity<Void> enrollToCourse(@RequestBody CourseEnrollmentRequest username, @PathVariable("code") String code) {
         service.courseEnrollment(username.getUsername(), code);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
