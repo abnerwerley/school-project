@@ -108,4 +108,27 @@ class UserControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void all_users() throws Exception {
+        userRepository.save(new User("ana", "ana@email.com"));
+        userRepository.save(new User("joao", "joao@email.com"));
+
+        mockMvc.perform(get("/users")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", is(2)))
+                .andExpect(jsonPath("$[0].username", is("ana")))
+                .andExpect(jsonPath("$[0].email", is("ana@email.com")))
+                .andExpect(jsonPath("$[1].username", is("joao")))
+                .andExpect(jsonPath("$[1].email", is("joao@email.com")));
+    }
+
+    @Test
+    void empty_users() throws Exception {
+        mockMvc.perform(get("/users")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
 }
