@@ -9,6 +9,7 @@ import br.com.alura.school.exception.RequestException;
 import br.com.alura.school.exception.ResourceNotFoundException;
 import br.com.alura.school.user.entity.User;
 import br.com.alura.school.user.persistence.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 import static java.lang.String.format;
 
 @Service
+@Slf4j
 public class CourseService {
 
     private final CourseRepository repository;
@@ -36,6 +38,7 @@ public class CourseService {
             return repository.findAll().stream().map(CourseResponse::new).collect(Collectors.toList());
 
         } catch (Exception e) {
+            log.error("Could not get All courses.");
             throw new RequestException("Could not get All courses.");
         }
     }
@@ -46,8 +49,10 @@ public class CourseService {
             return new CourseResponse(course);
 
         } catch (ResourceNotFoundException e) {
+            log.error(e.getMessage());
             throw new ResourceNotFoundException(e.getMessage());
         } catch (Exception e) {
+            log.error("Could not get course with code: " + code);
             throw new RequestException("Could not get course with code: " + code);
         }
     }
@@ -58,7 +63,7 @@ public class CourseService {
             return URI.create(format("/courses/%s", newCourseRequest.getCode()));
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Could not create new course. " + e.getMessage());
             throw new RequestException("Could not create new course.");
         }
     }
@@ -85,10 +90,13 @@ public class CourseService {
             }
 
         } catch (ResourceNotFoundException e) {
+            log.error(e.getMessage());
             throw new ResourceNotFoundException(e.getMessage());
         } catch (RequestException e) {
+            log.error(e.getMessage());
             throw new RequestException(e.getMessage());
         } catch (Exception e) {
+            log.error("Could not enroll to course. " + e.getMessage());
             throw new RequestException("Could not enroll to course.");
         }
     }
@@ -108,6 +116,7 @@ public class CourseService {
             return reportsPerUser;
 
         } catch (Exception e) {
+            log.error("Could not get courses report. " + e.getMessage());
             throw new RequestException("Could not get courses report.");
         }
     }
