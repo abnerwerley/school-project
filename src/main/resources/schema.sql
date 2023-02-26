@@ -5,16 +5,14 @@ DROP TABLE IF EXISTS User;
 CREATE TABLE User (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(20) NOT NULL UNIQUE,
-    email VARCHAR(100) NOT NULL,
-    courses VARCHAR(1000)
+    email VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE Course (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     code VARCHAR(10) NOT NULL UNIQUE,
     name VARCHAR(20) NOT NULL UNIQUE,
-    description VARCHAR(500),
-    usersEnrollend VARCHAR(1000)
+    description VARCHAR(500)
 );
 
 CREATE TABLE User_Course (
