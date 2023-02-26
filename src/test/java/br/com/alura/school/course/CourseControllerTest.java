@@ -68,6 +68,13 @@ class CourseControllerTest {
                 .andExpect(jsonPath("$[1].name", is("Spring Boot")))
                 .andExpect(jsonPath("$[1].shortDescription", is("Spring Boot")));
     }
+    @Test
+    void should_retrieve_all_courses_empty() throws Exception {
+        mockMvc.perform(get("/courses")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
 
     @Test
     void should_add_new_course() throws Exception {
