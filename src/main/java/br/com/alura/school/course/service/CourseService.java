@@ -39,7 +39,7 @@ public class CourseService {
 
         } catch (Exception e) {
             log.error("Could not get All courses.");
-            throw new RequestException("Could not get All courses.");
+            throw new RequestException("Could not get all courses.");
         }
     }
 

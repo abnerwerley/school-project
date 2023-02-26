@@ -10,7 +10,6 @@ import br.com.alura.school.exception.RequestException;
 import br.com.alura.school.exception.ResourceNotFoundException;
 import br.com.alura.school.user.entity.User;
 import br.com.alura.school.user.persistence.UserRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -55,39 +54,59 @@ class CourseServiceTest {
     public static final List<User> ALL_USERS = List.of(USER_ALEX, USER_JOANA);
 
     @Test
-    void all_courses() {
+    void test_all_courses() {
         when(repository.findAll()).thenReturn(List.of());
         List<CourseResponse> response = service.allCourses();
         assertNotNull(response);
     }
 
     @Test
-    void course_by_code() {
+    void test_all_courses_exception() {
+        when(repository.findAll()).thenThrow(new RuntimeException());
+        Exception exception = assertThrows(RequestException.class, () -> service.allCourses());
+        assertEquals("Could not get all courses.", exception.getMessage());
+    }
+
+    @Test
+    void test_course_by_code() {
         when(repository.findByCode(MYSQL_COURSE.getCode())).thenReturn(Optional.of(MYSQL_COURSE));
         CourseResponse response = service.courseByCode(MYSQL_COURSE.getCode());
         assertNotNull(response);
     }
 
     @Test
-    void course_by_code_not_found() {
+    void test_course_by_code_not_found() {
         when(repository.findByCode(MYSQL_COURSE.getCode())).thenReturn(Optional.empty());
         Exception exception = assertThrows(ResourceNotFoundException.class, () -> service.courseByCode(COURSE_CODE));
-        assertNotNull(exception);
         assertEquals("Course with code mysql-1 not found", exception.getMessage());
     }
 
     @Test
-    void test_newCourse() {
+    void test_course_by_code_exception() {
+        when(repository.findByCode(MYSQL_COURSE.getCode())).thenThrow(new RuntimeException());
+        Exception exception = assertThrows(RequestException.class, () -> service.courseByCode(COURSE_CODE));
+        assertEquals("Could not get course with code: " + MYSQL_COURSE.getCode(), exception.getMessage());
+    }
+
+    @Test
+    void test_new_course() {
         NewCourseRequest form = new NewCourseRequest(COURSE_CODE, COURSE_NAME, COURSE_DESCRIPTION);
         doReturn(MYSQL_COURSE).when(repository).save(any(Course.class));
         URI uri = service.newCourse(form);
-        assertNotNull(uri);
         assertEquals("/courses/mysql-1", uri.getPath());
         verify(repository, times(1)).save(any(Course.class));
     }
 
     @Test
-    void course_enrollment_test() {
+    void test_new_course_exception() {
+        NewCourseRequest form = new NewCourseRequest(COURSE_CODE, COURSE_NAME, COURSE_DESCRIPTION);
+        when(repository.save(any(Course.class))).thenThrow(new RuntimeException());
+        Exception exception = assertThrows(RequestException.class, () -> service.newCourse(form));
+        assertEquals("Could not create new course.", exception.getMessage());
+    }
+
+    @Test
+    void test_course_enrollment_test() {
         Optional<User> optionalUser = Optional.of(USER);
         Optional<Course> optionalCourse = Optional.of(MYSQL_COURSE);
 
@@ -103,30 +122,34 @@ class CourseServiceTest {
     }
 
     @Test
-    void course_enrollment_user_not_found() {
-        Optional<User> optionalUser = Optional.of(USER);
-
-        doReturn(optionalUser).when(userRepository).findByUsername(ALEX);
+    void test_course_enrollment_user_not_found() {
         when(userRepository.findByUsername(ALEX)).thenReturn(Optional.empty());
 
         Exception userNotFoundException = assertThrows(ResourceNotFoundException.class, () -> service.courseEnrollment(ALEX, COURSE_CODE));
-        assertNotNull(userNotFoundException);
         assertEquals("User not found with username: " + USER.getUsername(), userNotFoundException.getMessage());
         verify(userRepository).findByUsername(ALEX);
-        verify(repository).findByCode(COURSE_CODE);
         verify(repository, times(0)).save(any(Course.class));
         verify(userRepository, times(0)).save(any(User.class));
     }
 
     @Test
-    void course_enrollment_course_not_found() {
+    void test_course_enrollment_exception() {
+        when(userRepository.findByUsername(ALEX)).thenThrow(new RuntimeException());
+
+        Exception exception = assertThrows(RequestException.class, () -> service.courseEnrollment(ALEX, COURSE_CODE));
+        assertEquals("Could not enroll to course.", exception.getMessage());
+        verify(repository, times(0)).save(any(Course.class));
+        verify(userRepository, times(0)).save(any(User.class));
+    }
+
+    @Test
+    void test_course_enrollment_course_not_found() {
         Optional<User> optionalUser = Optional.of(USER);
 
         doReturn(optionalUser).when(userRepository).findByUsername(ALEX);
         when(repository.findByCode(MYSQL_COURSE.getCode())).thenReturn(Optional.empty());
 
         Exception courseNotFoundException = assertThrows(ResourceNotFoundException.class, () -> service.courseEnrollment(ALEX, COURSE_CODE));
-        assertNotNull(courseNotFoundException);
         assertEquals("Course not found with code: " + MYSQL_COURSE.getCode(), courseNotFoundException.getMessage());
         verify(userRepository).findByUsername(ALEX);
         verify(repository).findByCode(COURSE_CODE);
@@ -135,7 +158,7 @@ class CourseServiceTest {
     }
 
     @Test
-    void course_enrollment_user_already_enrolled() {
+    void test_course_enrollment_user_already_enrolled() {
         Optional<User> optionalUser = Optional.of(USER_ALEX);
         Optional<Course> optionalCourse = Optional.of(MYSQL_COURSE);
 
@@ -143,7 +166,6 @@ class CourseServiceTest {
         doReturn(optionalCourse).when(repository).findByCode(COURSE_CODE);
 
         Exception exception = assertThrows(RequestException.class, () -> service.courseEnrollment(ALEX, COURSE_CODE));
-        assertNotNull(exception);
         assertEquals("Already enrolled to course: " + MYSQL_COURSE.getName(), exception.getMessage());
         verify(userRepository).findByUsername(ALEX);
         verify(repository).findByCode(COURSE_CODE);
@@ -158,8 +180,7 @@ class CourseServiceTest {
         when(repository.findCourseQuantityByUser(USER_JOANA.getId())).thenReturn(3L);
 
         List<CourseReportResponse> response = service.report();
-        Assertions.assertNotEquals(0, response.size());
-        assertNotNull(response);
+        assertNotEquals(0, response.size());
     }
 
     @Test
@@ -169,5 +190,13 @@ class CourseServiceTest {
 
         List<CourseReportResponse> response = service.report();
         assertEquals(0, response.size());
+    }
+
+    @Test
+    void test_report_exception() {
+        when(userRepository.findAll()).thenThrow(new RuntimeException());
+
+        Exception exception = assertThrows(RequestException.class, () -> service.report());
+        assertEquals("Could not get courses report.", exception.getMessage());
     }
 }

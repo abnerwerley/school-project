@@ -37,7 +37,6 @@ public class UserService {
             log.error("Could not get user by username: " + username + e.getMessage());
             throw new RequestException("Could not get user by username: " + username);
         }
-
     }
 
     public URI newUser(NewUserRequest newUserRequest) {
@@ -54,6 +53,11 @@ public class UserService {
     }
 
     public List<UserResponse> allUsers() {
-        return repository.findAll().stream().map(UserResponse::new).collect(Collectors.toList());
+        try {
+            return repository.findAll().stream().map(UserResponse::new).collect(Collectors.toList());
+        }catch (Exception e) {
+            log.error("Could not find all users. " + e.getMessage());
+            throw new RequestException("Could not find all users.");
+        }
     }
 }
