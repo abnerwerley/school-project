@@ -55,6 +55,13 @@ class Course {
         this.usersEnrolled = usersEnrolled;
     }
 
+    public Course(Long id, String code, String name, String description) {
+        this.id = id;
+        this.code = code;
+        this.name = name;
+        this.description = description;
+    }
+
     public void setUsersEnrolled(User usersEnrolled) {
         this.usersEnrolled.add(usersEnrolled);
     }
