@@ -101,10 +101,19 @@ class CourseServiceTest {
     @Test
     void test_new_course() {
         NewCourseRequest form = new NewCourseRequest(COURSE_CODE, COURSE_NAME, COURSE_DESCRIPTION);
+        when(repository.findByCode(form.getCode())).thenReturn(Optional.empty());
         doReturn(MYSQL_COURSE).when(repository).save(any(Course.class));
         URI uri = service.newCourse(form);
         assertEquals("/courses/mysql-1", uri.getPath());
         verify(repository, times(1)).save(any(Course.class));
+    }
+
+    @Test
+    void test_new_course_code_already_in_use() {
+        NewCourseRequest form = new NewCourseRequest(COURSE_CODE, COURSE_NAME, COURSE_DESCRIPTION);
+        when(repository.findByCode(form.getCode())).thenReturn(Optional.of(form.toEntity()));
+        Exception exception = assertThrows(RequestException.class, () -> service.newCourse(form));
+        assertEquals("Course code already in use.", exception.getMessage());
     }
 
     @Test

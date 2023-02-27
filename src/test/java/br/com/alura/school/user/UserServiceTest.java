@@ -1,6 +1,5 @@
 package br.com.alura.school.user;
 
-import br.com.alura.school.course.entity.Course;
 import br.com.alura.school.exception.RequestException;
 import br.com.alura.school.exception.ResourceNotFoundException;
 import br.com.alura.school.user.entity.User;
@@ -60,6 +59,7 @@ class UserServiceTest {
     @Test
     void new_user() {
         NewUserRequest form = new NewUserRequest(USERNAME, EMAIL);
+        when(repository.findByUsername(USERNAME)).thenReturn(Optional.empty());
         doReturn(USER).when(repository).save(any(User.class));
         URI uri = service.newUser(form);
         assertEquals("/users/" + USERNAME, uri.getPath());
@@ -77,7 +77,17 @@ class UserServiceTest {
     @Test
     void new_user_exception() {
         NewUserRequest form = new NewUserRequest(null, EMAIL);
+        when(repository.findByUsername(USERNAME)).thenReturn(Optional.empty());
         when(repository.save(any(User.class))).thenThrow(new NullPointerException());
+
+        Exception exception = assertThrows(RequestException.class, () -> service.newUser(form));
+        assertEquals("Could not create user.", exception.getMessage());
+    }
+
+    @Test
+    void new_user_username_alredy_in_use() {
+        NewUserRequest form = new NewUserRequest(USERNAME, EMAIL);
+        when(repository.findByUsername(USERNAME)).thenReturn(Optional.of(form.toEntity()));
 
         Exception exception = assertThrows(RequestException.class, () -> service.newUser(form));
         assertEquals("Could not create user.", exception.getMessage());
