@@ -3,6 +3,7 @@ package br.com.alura.school.user.entity;
 import br.com.alura.school.course.entity.Course;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -17,6 +18,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 public
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 class User {
 
     @Id
@@ -38,10 +40,6 @@ class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "course_id"))
     private List<Course> courses = new ArrayList<>();
-
-    @Deprecated
-    protected User() {
-    }
 
     public User(String username, String email) {
         this.username = username;

@@ -1,10 +1,12 @@
 package br.com.alura.school.course.service;
 
 import br.com.alura.school.course.entity.Course;
+import br.com.alura.school.course.entity.UserCourse;
 import br.com.alura.school.course.json.CourseReportResponse;
 import br.com.alura.school.course.json.CourseResponse;
 import br.com.alura.school.course.json.NewCourseRequest;
 import br.com.alura.school.course.persistence.CourseRepository;
+import br.com.alura.school.course.persistence.UserCourseRepository;
 import br.com.alura.school.exception.RequestException;
 import br.com.alura.school.exception.ResourceNotFoundException;
 import br.com.alura.school.user.entity.User;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,12 +28,13 @@ import static java.lang.String.format;
 public class CourseService {
 
     private final CourseRepository repository;
-
     private final UserRepository userRepository;
+    private final UserCourseRepository userCourseRepository;
 
-    public CourseService(CourseRepository repository, UserRepository userRepository) {
+    public CourseService(CourseRepository repository, UserRepository userRepository, UserCourseRepository userCourseRepository) {
         this.repository = repository;
         this.userRepository = userRepository;
+        this.userCourseRepository = userCourseRepository;
     }
 
     public List<CourseResponse> allCourses() {
@@ -80,13 +84,22 @@ public class CourseService {
             }
             Course course = courseOptional.get();
             User user = userOptional.get();
-            if (!user.getCourses().contains(course)) {
+            List<UserCourse> coursesEnrolled = userCourseRepository.fingCoursesByUserId(user.getId());
+
+            boolean courseAlreadyEnrolled = coursesEnrolled.stream()
+                    .anyMatch(userCourse -> userCourse.getId().getCourse().equals(course));
+
+            if (courseAlreadyEnrolled) {
+                throw new RequestException("Already enrolled to course: " + course.getName());
+            } else {
+                UserCourse userCourse = new UserCourse();
                 course.setUsersEnrolled(user);
                 user.setCourses(course);
+                userCourse.setUserCourseId(user, course);
+                userCourse.setEnrolledAt(LocalDate.now());
                 repository.save(course);
+                userCourseRepository.save(userCourse);
                 userRepository.save(user);
-            } else {
-                throw new RequestException("Already enrolled to course: " + course.getName());
             }
 
         } catch (ResourceNotFoundException e) {
