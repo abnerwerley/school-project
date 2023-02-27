@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
@@ -41,8 +42,12 @@ public class UserService {
 
     public URI newUser(NewUserRequest newUserRequest) {
         try {
-            repository.save(newUserRequest.toEntity());
-            return URI.create(format("/users/%s", newUserRequest.getUsername()));
+            Optional<User> optionalUser = repository.findByUsername(newUserRequest.getUsername());
+            if (optionalUser.isEmpty()) {
+                repository.save(newUserRequest.toEntity());
+                return URI.create(format("/users/%s", newUserRequest.getUsername()));
+            }
+            throw new RequestException("Username already in use.");
         } catch (IllegalArgumentException e) {
             log.error("Username must not have any space.");
             throw new RequestException("Username must not have any space.");
@@ -55,7 +60,7 @@ public class UserService {
     public List<UserResponse> allUsers() {
         try {
             return repository.findAll().stream().map(UserResponse::new).collect(Collectors.toList());
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("Could not find all users. " + e.getMessage());
             throw new RequestException("Could not find all users.");
         }

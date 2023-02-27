@@ -63,9 +63,15 @@ public class CourseService {
 
     public URI newCourse(NewCourseRequest newCourseRequest) {
         try {
-            repository.save(newCourseRequest.toEntity());
-            return URI.create(format("/courses/%s", newCourseRequest.getCode()));
-
+            Optional<Course> optionalCourse = repository.findByCode(newCourseRequest.getCode());
+            if (optionalCourse.isEmpty()) {
+                repository.save(newCourseRequest.toEntity());
+                return URI.create(format("/courses/%s", newCourseRequest.getCode()));
+            }
+            throw new RequestException("Course code already in use.");
+        } catch (RequestException e) {
+            log.error(e.getMessage());
+            throw new RequestException(e.getMessage());
         } catch (Exception e) {
             log.error("Could not create new course. " + e.getMessage());
             throw new RequestException("Could not create new course.");
