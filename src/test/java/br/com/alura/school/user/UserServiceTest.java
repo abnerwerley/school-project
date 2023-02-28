@@ -35,7 +35,7 @@ class UserServiceTest {
     public static final User USER = new User(USERNAME, EMAIL);
 
     @Test
-    void user_by_username() {
+    void test_user_by_username() {
         when(repository.findByUsername(USERNAME)).thenReturn(Optional.of(USER));
         UserResponse user = service.userByUsername(USERNAME);
         assertEquals(USERNAME, user.getUsername());
@@ -43,21 +43,21 @@ class UserServiceTest {
     }
 
     @Test
-    void user_by_name_not_found() {
+    void test_user_by_name_not_found() {
         when(repository.findByUsername(USERNAME)).thenReturn(Optional.empty());
         Exception exception = assertThrows(ResourceNotFoundException.class, () -> service.userByUsername(USERNAME));
         assertEquals("User anyname not found", exception.getMessage());
     }
 
     @Test
-    void user_by_name_exception() {
+    void test_user_by_name_exception() {
         when(repository.findByUsername(USERNAME)).thenThrow(new RuntimeException());
         Exception exception = assertThrows(RequestException.class, () -> service.userByUsername(USERNAME));
         assertEquals("Could not get user by username: " + USERNAME, exception.getMessage());
     }
 
     @Test
-    void new_user() {
+    void test_new_user() {
         NewUserRequest form = new NewUserRequest(USERNAME, EMAIL);
         when(repository.findByUsername(USERNAME)).thenReturn(Optional.empty());
         doReturn(USER).when(repository).save(any(User.class));
@@ -67,7 +67,7 @@ class UserServiceTest {
     }
 
     @Test
-    void new_user_illegal_argument_exception() {
+    void test_new_user_illegal_argument_exception() {
         NewUserRequest form = new NewUserRequest("Any name", EMAIL);
         when(repository.save(any(User.class))).thenThrow(new IllegalArgumentException());
         Exception exception = assertThrows(RequestException.class, () -> service.newUser(form));
@@ -75,7 +75,7 @@ class UserServiceTest {
     }
 
     @Test
-    void new_user_exception() {
+    void test_new_user_exception() {
         NewUserRequest form = new NewUserRequest(null, EMAIL);
         when(repository.findByUsername(USERNAME)).thenReturn(Optional.empty());
         when(repository.save(any(User.class))).thenThrow(new NullPointerException());
@@ -85,7 +85,7 @@ class UserServiceTest {
     }
 
     @Test
-    void new_user_username_alredy_in_use() {
+    void test_new_user_username_alredy_in_use() {
         NewUserRequest form = new NewUserRequest(USERNAME, EMAIL);
         when(repository.findByUsername(USERNAME)).thenReturn(Optional.of(form.toEntity()));
 
@@ -94,21 +94,21 @@ class UserServiceTest {
     }
 
     @Test
-    void all_users() {
+    void test_all_users() {
         when(repository.findAll()).thenReturn(List.of(USER));
         List<UserResponse> response = service.allUsers();
         assertNotEquals(0, response.size());
     }
 
     @Test
-    void all_users_empty_list() {
+    void test_all_users_empty_list() {
         when(repository.findAll()).thenReturn(List.of());
         List<UserResponse> response = service.allUsers();
         assertEquals(0, response.size());
     }
 
     @Test
-    void all_users_exception() {
+    void test_all_users_exception() {
         when(repository.findAll()).thenThrow(new RuntimeException());
         Exception exception = assertThrows(RequestException.class, () -> service.allUsers());
         assertEquals("Could not find all users.", exception.getMessage());
